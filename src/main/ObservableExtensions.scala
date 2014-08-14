@@ -26,11 +26,23 @@ package object ObservableExtensions {
       )
     }
 
-    def mymap[R](f: T => R) = {
+    def mymap[R](f: T => R): Observable[R] = {
       mylift (
         (subscriber: Subscriber[R]) => {
           Subscriber[T](
             (v: T) => subscriber.onNext(f(v)),
+            e      => subscriber.onError(e),
+            ()     => subscriber.onCompleted()
+          )
+        }
+      )
+    }
+
+    def myfilter(f: T => Boolean): Observable[T] = {
+      mylift (
+        (subscriber: Subscriber[T]) => {
+          Subscriber[T](
+            (v: T) => if (f(v)) subscriber.onNext(v) else (),
             e      => subscriber.onError(e),
             ()     => subscriber.onCompleted()
           )
