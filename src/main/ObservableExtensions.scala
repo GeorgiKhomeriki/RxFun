@@ -26,6 +26,18 @@ package object ObservableExtensions {
       )
     }
 
+    def mymap[R](f: T => R) = {
+      mylift (
+        (subscriber: Subscriber[R]) => {
+          Subscriber[T](
+            (v: T) => subscriber.onNext(f(v)),
+            e      => subscriber.onError(e),
+            ()     => subscriber.onCompleted()
+          )
+        }
+      )
+    }
+
   }
 
 }
