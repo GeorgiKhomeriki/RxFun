@@ -50,6 +50,21 @@ package object ObservableExtensions {
       )
     }
 
+    def myflatmap[R](f: T => Observable[R]): Observable[R] = {
+      mylift (
+        (subscriber: Subscriber[R]) => {
+          Subscriber[T](
+            (v: T) => subscriber.add(f(v).subscribe(
+                        (w: R) => subscriber.onNext(w),
+                        e      => subscriber.onError(e)
+                      )),
+            e      => subscriber.onError(e),
+            ()     => subscriber.onCompleted()
+          )
+        }
+      )
+    }
+
   }
 
 }
