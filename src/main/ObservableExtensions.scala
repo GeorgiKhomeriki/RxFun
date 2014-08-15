@@ -30,6 +30,7 @@ package object ObservableExtensions {
       mylift (
         (subscriber: Subscriber[R]) => {
           Subscriber[T](
+            subscriber,
             (v: T) => subscriber.onNext(f(v)),
             e      => subscriber.onError(e),
             ()     => subscriber.onCompleted()
@@ -42,6 +43,7 @@ package object ObservableExtensions {
       mylift (
         (subscriber: Subscriber[T]) => {
           Subscriber[T](
+            subscriber,
             (v: T) => if (f(v)) subscriber.onNext(v) else (),
             e      => subscriber.onError(e),
             ()     => subscriber.onCompleted()
@@ -54,6 +56,7 @@ package object ObservableExtensions {
       mylift (
         (subscriber: Subscriber[R]) => {
           Subscriber[T](
+            subscriber,
             (v: T) => subscriber.add(f(v).subscribe(
                         (w: R) => subscriber.onNext(w),
                         e      => subscriber.onError(e)
